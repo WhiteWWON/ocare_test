@@ -1,14 +1,21 @@
 package com.ocare.Ocare.global.config;
 
+import com.ocare.Ocare.adapter.in.web.filter.JwtAuthenticationFilter;
+import com.ocare.Ocare.global.util.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtTokenProvider jwtTokenProvider;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -26,7 +33,10 @@ public class SecurityConfig {
                     .requestMatchers("/api/auth/**").permitAll()
                     // 그 외 모든 요청은 인증 필요
                     .anyRequest().authenticated()
-            );
+            )
+            // 필터 순서 지정: UsernamePassword필터 전에 JWT필터 실행
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                    UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

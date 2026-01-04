@@ -23,9 +23,24 @@ public class JwtTokenProvider {
                 .signWith(key)
                 .compact();
     }
-
     public String createRefreshToken(String email) {
         // Refresh Token은 보통 만료시간을 길게 설정 (Service에서 관리)
         return UUID.randomUUID().toString();
+    }
+
+    // 토큰에서 이메일(Subject) 추출
+    public String getEmail(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    // 토큰 유효성 검증
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false; // 만료되었거나 변조된 토큰
+        }
     }
 }
