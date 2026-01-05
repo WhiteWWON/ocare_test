@@ -1,6 +1,7 @@
 package com.ocare.Ocare.global.config;
 
 import com.ocare.Ocare.adapter.in.web.filter.JwtAuthenticationFilter;
+import com.ocare.Ocare.adapter.out.redis.AuthTokenPort;
 import com.ocare.Ocare.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthTokenPort authTokenPort;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -35,7 +37,7 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
             )
             // 필터 순서 지정: UsernamePassword필터 전에 JWT필터 실행
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, authTokenPort),
                     UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

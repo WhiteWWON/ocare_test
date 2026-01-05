@@ -25,9 +25,21 @@ public class RedisAuthAdapter implements AuthTokenPort {
         String savedToken = redisTemplate.opsForValue().get("RT:" + email);
         return refreshToken.equals(savedToken);
     }
-
     @Override
     public void deleteRefreshToken(String email) {
         redisTemplate.delete("RT:" + email);
+    }
+    @Override
+    public void reportBlacklist(String accessToken, long remainingTime) {
+        // 키 앞에 "BL:"을 붙여 블랙리스트임을 구분하고, 토큰의 남은 수명만큼만 저장
+        redisTemplate.opsForValue().set(
+                "BL:" + accessToken,
+                "logout",
+                Duration.ofMillis(remainingTime)
+        );
+    }
+    @Override
+    public boolean isBlacklisted(String accessToken) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey("BL:" + accessToken));
     }
 }

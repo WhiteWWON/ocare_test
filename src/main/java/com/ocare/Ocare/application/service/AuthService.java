@@ -1,10 +1,7 @@
 package com.ocare.Ocare.application.service;
 
 import com.ocare.Ocare.adapter.out.redis.AuthTokenPort;
-import com.ocare.Ocare.application.port.in.LoginCommand;
-import com.ocare.Ocare.application.port.in.LoginUseCase;
-import com.ocare.Ocare.application.port.in.SignUpCommand;
-import com.ocare.Ocare.application.port.in.SignUpUseCase;
+import com.ocare.Ocare.application.port.in.*;
 import com.ocare.Ocare.application.port.out.MemberPort;
 import com.ocare.Ocare.domain.model.AuthToken;
 import com.ocare.Ocare.domain.model.Member;
@@ -14,9 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
-public class AuthService implements SignUpUseCase, LoginUseCase {
+public class AuthService implements SignUpUseCase, LoginUseCase, LogoutUseCase {
 
     private final MemberPort memberPort;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -62,5 +61,22 @@ public class AuthService implements SignUpUseCase, LoginUseCase {
         authTokenPort.saveRefreshToken(member.getEmail(), refreshToken, 7 * 24 * 60 * 60 * 1000L);
 
         return new AuthToken(accessToken, refreshToken);
+    }
+
+    @Override
+    @Transactional
+    public void logout(String email, String accessToken) {
+        // 1/ Redis에서 해당 이메일로 저장된 Refresh Token 삭제
+        authTokenPort.deleteRefreshToken(email);
+
+        // 2. AccessToken 남은 유효시간 계산
+        long expiration = jwtTokenProvider.getExpiration(accessToken); // 아래 유틸에 추가 필요
+        long now = new Date().getTime();
+        long remainingTime = expiration - now;
+
+        // 3. AccessToken 블랙리스트로 등록
+        if (remainingTime > 0) {
+            authTokenPort.reportBlacklist(accessToken, remainingTime);
+        }
     }
 }

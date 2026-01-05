@@ -56,4 +56,14 @@ public class JwtTokenProvider {
             return false; // 만료되었거나 변조된 토큰
         }
     }
+
+    public long getExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .getTime();
+    }
 }
