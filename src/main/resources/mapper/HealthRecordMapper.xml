@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ocare.Ocare.adapter.out.persistence.repository.HealthRecordMapper">
+
+    <insert id="insertMaster" useGeneratedKeys="true" keyProperty="rcMasterId" keyColumn="rc_master_id">
+        INSERT INTO OC_HEALTH_RECORD_MASTER (
+            member_id, record_key, record_type, sc_mode, sc_product_name,
+            sc_product_vender, sc_app_name, record_total_cnt, lastupdate_dt, created_id
+        ) VALUES (
+                     #{memberId}, #{recordKey}, #{recordType}, #{scMode}, #{scProductName},
+                     #{scProductVender}, #{scAppName}, #{recordTotalCnt}, #{lastupdateDt}, #{createdId}
+                 )
+            ON DUPLICATE KEY UPDATE
+             rc_master_id = LAST_INSERT_ID(rc_master_id),
+             lastupdate_dt = VALUES(lastupdate_dt)
+    </insert>
+
+    <insert id="upsertDetailBatch">
+        INSERT INTO OC_HEALTH_RECORD_DETAIL (
+            rc_master_id, member_id, steps, period_from, period_to,
+            distance_unit, distance_value, calories_unit, calories_value, created_id
+        ) VALUES
+        <foreach collection="details" item="item" separator=",">
+            (
+            #{item.rcMasterId}, #{item.memberId}, #{item.steps}, #{item.periodFrom}, #{item.periodTo},
+            #{item.distanceUnit}, #{item.distanceValue}, #{item.caloriesUnit}, #{item.caloriesValue}, #{item.createdId}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+         updated_dt = CURRENT_TIMESTAMP(3),
+         updated_id = VALUES(created_id)
+    </insert>
+
+    <select id="getProcessedCount" resultType="int">
+        SELECT IFNULL(MAX(record_total_cnt), 0) FROM OC_HEALTH_RECORD_MASTER WHERE rc_master_id = #{rcMasterId}
+    </select>
+
+    <update id="updateProcessedCount">
+        UPDATE OC_HEALTH_RECORD_MASTER SET record_total_cnt = #{processedCnt} WHERE rc_master_id = #{rcMasterId}
+    </update>
+
+    <select id="selectMasterByRecordKey" resultType="com.ocare.domain.model.HealthRecordMaster">
+        SELECT
+            rc_master_id,
+            member_id,
+            record_key,
+            record_type,
+            sc_mode,
+            sc_product_name,
+            sc_product_vender,
+            sc_app_name,
+            record_total_cnt,
+            lastupdate_dt,
+            created_dt,
+            created_id,
+            updated_dt,
+            updated_id
+        FROM OC_HEALTH_RECORD_MASTER
+        WHERE record_key = #{recordKey}
+          AND member_id = #{memberId}
+    </select>
+
+</mapper>
