@@ -37,6 +37,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	// AOP
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	// Kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+	// JSON 직렬화/역직렬화용
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	// MyBatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'

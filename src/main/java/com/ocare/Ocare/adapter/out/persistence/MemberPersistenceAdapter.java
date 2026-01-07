@@ -6,6 +6,8 @@ import com.ocare.Ocare.application.port.out.MemberPort;
 import com.ocare.Ocare.domain.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -29,5 +31,16 @@ public class MemberPersistenceAdapter implements MemberPort {
     public Optional<Member> findByEmail(String email) {
         // DB에서 조회 후 도메인 모델로 변환하여 반환 (로그인 시 사용)
         return memberRepository.findByEmail(email).map(MemberJpaEntity::toDomain);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void increaseLoginFailCount(String email) {
+        memberRepository.increaseLoginFailCount(email);
+    }
+
+    @Override
+    public void resetLoginFailCount(String email) {
+        memberRepository.resetLoginFailCount(email);
     }
 }

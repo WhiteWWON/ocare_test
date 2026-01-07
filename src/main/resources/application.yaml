@@ -5,14 +5,14 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # [주의] serverTimezone 설정은 필수이며, useSSL은 보안 설정에 따라 true/false를 선택합니다.
-    url: jdbc:mysql://localhost:3306/mysql?serverTimezone=Asia/Seoul&useCharacterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/ocare?serverTimezone=Asia/Seoul&useCharacterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: ocare
     password: 1234
 
   jpa:
     hibernate:
       # create: 기존 테이블 삭제 후 재생성, update: 변경분만 반영
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -24,3 +24,14 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+  mybatis:
+    # XML 매퍼 파일의 경로 (src/main/resources/mapper 하위)
+    mapper-locations: classpath:mapper/**/*.xml
+    # 카멜케이스 자동 변환 (DB의 created_at -> Java의 createdAt)
+    configuration:
+      map-underscore-to-camel-case: true
+      # 쿼리 결과가 null일 때 기본값 설정 등 추가 옵션
+      jdbc-type-for-null: 'NULL'
+    # 도메인 클래스 패키지 경로 (XML에서 클래스명만 쓰기 위함)
+    type-aliases-package: com.ocare.Ocare.domain.model

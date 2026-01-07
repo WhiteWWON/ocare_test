@@ -34,7 +34,7 @@ public class AuthService implements SignUpUseCase, LoginUseCase, LogoutUseCase {
                 .password(passwordEncoder.encode(command.getPassword()))
                 .name(command.getName())
                 .nickname(command.getNickname())
-                .loginCnt(0)
+                .loginFailCnt(0)
                 .createdId("SYSTEM")
                 .build();
 
@@ -48,16 +48,28 @@ public class AuthService implements SignUpUseCase, LoginUseCase, LogoutUseCase {
         Member member = memberPort.findByEmail(command.getEmail())
                 .orElseThrow(() -> new RuntimeException("가입되지 않은 이메일입니다."));
 
-        // 2. 비밀번호 일치 확인
-        if (!passwordEncoder.matches(command.getPassword(), member.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        // 2. 계정 잠금 여부 확인 (예: 로그인 5회 이상 실패 시)
+        if (member.getLoginFailCnt() != null && member.getLoginFailCnt() >= 5) {
+            throw new RuntimeException("비밀번호 5회 오류로 인해 계정이 잠겼습니다. 관리자에게 문의하세요.");
         }
 
-        // 3. 토큰 생성
+        // 3. 비밀번호 일치 확인
+        if (!passwordEncoder.matches(command.getPassword(), member.getPassword())) {
+            // 실패 시 카운트 증가 (Port를 통해 DB 업데이트)
+            memberPort.increaseLoginFailCount(command.getEmail());
+            int updatedFailCnt = (member.getLoginFailCnt() == null ? 0 : member.getLoginFailCnt()) + 1;
+            throw new RuntimeException("비밀번호가 일치하지 않습니다. (현재 실패 횟수: " + updatedFailCnt + "/5)");
+        }
+
+        // 4. 로그인 성공 시 처리
+        // 실패 카운트 초기화 및 마지막 로그인 시간 업데이트
+        memberPort.resetLoginFailCount(command.getEmail());
+
+        // 5. 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(member.getEmail());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail());
 
-        // 4. Redis에 Refresh Token 저장 (예: 7일간 유효)
+        // 6. Redis에 Refresh Token 저장 (예: 7일간 유효)
         authTokenPort.saveRefreshToken(member.getEmail(), refreshToken, 7 * 24 * 60 * 60 * 1000L);
 
         return new AuthToken(accessToken, refreshToken);

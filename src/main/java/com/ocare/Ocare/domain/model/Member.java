@@ -11,6 +11,6 @@ public class Member {
     private final String password;
     private final String name;
     private final String nickname;
-    private final Integer loginCnt;
+    private final Integer loginFailCnt;
     private final String createdId;
 }

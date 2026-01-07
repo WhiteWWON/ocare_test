@@ -18,7 +18,7 @@ public class MemberJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long member_id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -26,11 +26,21 @@ public class MemberJpaEntity {
 
     private String name;
     private String nickname;
-    private Integer login_cnt;
+
+    @CreationTimestamp
+    private LocalDateTime last_login_dt;
+
+    @Column(name = "login_fail_cnt")
+    private Integer login_fail_cnt = 0;
 
     @CreationTimestamp
     private LocalDateTime created_dt;
     private String created_id;
+
+    @CreationTimestamp
+    @Column(name = "updated_dt")
+    private LocalDateTime updated_dt;
+    private String updated_id;
 
     // 도메인 모델 -> JPA 엔티티 변환 (저장할 때 사용)
     public static MemberJpaEntity fromDomain(Member member) {
@@ -39,7 +49,7 @@ public class MemberJpaEntity {
         entity.password = member.getPassword();
         entity.name = member.getName();
         entity.nickname = member.getNickname();
-        entity.login_cnt = member.getLoginCnt();
+        entity.login_fail_cnt = member.getLoginFailCnt();
         entity.created_id = member.getCreatedId();
         return entity;
     }
@@ -52,7 +62,7 @@ public class MemberJpaEntity {
                 .password(this.password)
                 .name(this.name)
                 .nickname(this.nickname)
-                .loginCnt(this.login_cnt)
+                .loginFailCnt(this.login_fail_cnt)
                 .createdId(this.created_id)
                 .build();
     }
