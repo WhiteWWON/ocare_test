@@ -17,10 +17,11 @@ public class JwtTokenProvider {
     /**
      * Access Token 생성 메서드
      */
-    public String createAccessToken(String email) {
+    public String createAccessToken(String email, Long memberId) {
         Date now = new Date();
         return Jwts.builder() // JWT 생성 시작
                 .setSubject(email) // 토큰 주인(이메일)설정
+                .claim("memberId", memberId) // (추가) 클레임에 memberId 저장
                 .setIssuedAt(now)  // 발행 시간 설정
                 .setExpiration(new Date(now.getTime() + accessTokenTime)) //만료 시간 설정
                 .signWith(key) // 비밀 키로 서명
@@ -43,6 +44,21 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)// 토큰 분석 및 검증
                 .getBody() // 내용물(Claims) 가져오기
                 .getSubject(); // 이메일 반환
+    }
+
+    /**
+     * 토큰에서 memberId 추출
+     */
+    public Long getMemberId(String token) {
+        // "Bearer " 접두사가 포함되어 들어올 경우를 대비한 안전한 처리
+        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+        Object memberId = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(jwtToken)
+                .getBody()
+                .get("memberId"); // 클레임에서 꺼내기
+        return memberId != null ? Long.valueOf(memberId.toString()) : null;
     }
 
     /**

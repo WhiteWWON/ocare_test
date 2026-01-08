@@ -4,13 +4,12 @@ import com.ocare.Ocare.application.port.in.HealthRecordUseCase;
 import com.ocare.Ocare.domain.model.HealthRecordDetail;
 import com.ocare.Ocare.domain.model.HealthRecordMaster;
 import com.ocare.Ocare.domain.model.RecordType;
+import com.ocare.Ocare.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,12 +24,20 @@ import java.util.stream.Collectors;
 public class HealthRecordController {
 
     private final HealthRecordUseCase healthRecordUseCase;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/bulk-record")
-    public ResponseEntity<String> bulkRecord(@RequestBody HealthDataRequest request) {
-        // 1. Master 정보 추출 (평탄화)
+    public ResponseEntity<String> bulkRecord(@RequestBody HealthDataRequest request, @RequestHeader("Authorization") String authHeader // "Bearer [token]" 형태로 들어옴
+    ) {
+        // 1. 토큰에서 실제 memberId 추출
+        Long currentMemberId = jwtTokenProvider.getMemberId(authHeader);
+        if (currentMemberId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+        }
+        
+        // 2. HealthRecordMaster 정보 설정
         HealthRecordMaster master = HealthRecordMaster.builder()
-                .memberId(12345L) // 실제로는 세션이나 토큰에서 가져옴
+                .memberId(currentMemberId) // 토큰에서 가져온 member_id
                 .recordKey(request.getRecordkey())
                 .recordType(RecordType.fromJsonType(request.getType()).getCode()) // DB 저장용 코드로 변환
                 .scMode(request.getData().getSource().getMode())
@@ -41,7 +48,8 @@ public class HealthRecordController {
                 .createdId("WEB_TEST")
                 .build();
         log.info("HealthRecordMaster 처리!");
-        // 2. Detail 리스트 추출
+
+        // 3. Detail 리스트 추출
         List<HealthRecordDetail> detailList = request.getData().getEntries().stream()
                 .map(entry -> HealthRecordDetail.builder()
                         .steps(parseSteps(entry.getSteps()))

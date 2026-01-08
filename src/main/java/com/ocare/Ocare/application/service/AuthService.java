@@ -66,7 +66,7 @@ public class AuthService implements SignUpUseCase, LoginUseCase, LogoutUseCase {
         memberPort.resetLoginFailCount(command.getEmail());
 
         // 5. 토큰 생성
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getMemberId());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail());
 
         // 6. Redis에 Refresh Token 저장 (예: 7일간 유효)
