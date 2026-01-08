@@ -27,6 +27,9 @@
             )
         </foreach>
         ON DUPLICATE KEY UPDATE
+         steps = VALUES(steps),
+         distance_value = VALUES(distance_value),
+         calories_value = VALUES(calories_value),
          updated_dt = CURRENT_TIMESTAMP(3),
          updated_id = VALUES(created_id)
     </insert>
@@ -36,7 +39,11 @@
     </select>
 
     <update id="updateProcessedCount">
-        UPDATE OC_HEALTH_RECORD_MASTER SET record_total_cnt = #{processedCnt} WHERE rc_master_id = #{rcMasterId}
+        UPDATE OC_HEALTH_RECORD_MASTER
+           SET record_total_cnt = #{processedCnt},
+               updated_dt = CURRENT_TIMESTAMP(3),
+               updated_id = #{createdId}
+         WHERE rc_master_id = #{rcMasterId}
     </update>
 
     <select id="selectMasterByRecordKey" resultType="com.ocare.Ocare.domain.model.HealthRecordMaster">

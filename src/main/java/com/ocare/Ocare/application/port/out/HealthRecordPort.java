@@ -18,7 +18,7 @@ public interface HealthRecordPort {
     int getProcessedCount(Long rcMasterId);
 
     // 마스터 ID 기준 진행 상황(Checkpoint) 업데이트
-    void updateProcessedCount(Long rcMasterId, int processedCnt);
+    void updateProcessedCount(Long rcMasterId, int processedCnt, String createdId);
 
     // [추가] recordKey와 memberId로 기존 마스터 존재 여부 확인 (멱등성 보장용)
     Optional<HealthRecordMaster> findMasterByRecordKey(String recordKey, Long memberId);

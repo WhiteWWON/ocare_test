@@ -20,6 +20,6 @@ public interface HealthRecordMapper {
 
     // 진행률 확인 및 업데이트
     int getProcessedCount(@Param("rcMasterId") Long rcMasterId);
-    void updateProcessedCount(@Param("rcMasterId") Long rcMasterId, @Param("processedCnt") int processedCnt);
+    void updateProcessedCount(@Param("rcMasterId") Long rcMasterId, @Param("processedCnt") int processedCnt, @Param("createdId") String createdId);
     Optional<HealthRecordMaster> selectMasterByRecordKey(@Param("recordKey") String recordKey, @Param("memberId") Long memberId);
 }

@@ -31,9 +31,10 @@ public class HealthRecordService implements HealthRecordUseCase {
         // 2. 이전에 성공했던 기록 확인
         int savedCount = healthRecordPort.getProcessedCount(masterId);
 
-        // [핵심] 순서가 바뀌어 들어올 경우를 대비해 100건 정도 뒤로 물러나서(Overlap) 시작
+        // 순서가 바뀌어 들어올 경우를 대비해 100건 정도 뒤로 물러나서(Overlap) 시작
         int startOffset = Math.max(0, savedCount - 100);
-        // Offset이 리스트 크기보다 크면 처리할 게 없음
+
+        // Offset이 리스트 크기보다 크거나, 이전 성공카운트와 리스트 크기가 같으면 처리할 게 없음
         if (startOffset >= details.size()) {
             log.info("[SKIP] All data already processed. MasterId: {}", masterId);
             return;
@@ -43,10 +44,10 @@ public class HealthRecordService implements HealthRecordUseCase {
         // 3. 데이터 매핑 및 벌크 저장
         final int BATCH_SIZE = 1000;
         try {
+            int currentTotal = 0;
             for (int i = 0; i < processList.size(); i += BATCH_SIZE) {
                 int endIndex = Math.min(i + BATCH_SIZE, processList.size());
                 List<HealthRecordDetail> chunk = processList.subList(i, endIndex);
-
                 chunk.forEach(d -> {
                     d.setRcMasterId(masterId);
                     d.setMemberId(master.getMemberId());
@@ -56,10 +57,12 @@ public class HealthRecordService implements HealthRecordUseCase {
                 healthRecordPort.upsertDetails(chunk);
 
                 // 4. 체크포인트 업데이트 (절대적 위치 기록)
-                int currentTotal = startOffset + i + chunk.size();
-                healthRecordPort.updateProcessedCount(masterId, currentTotal);
+                currentTotal = startOffset + i + chunk.size();
                 log.debug("[PROGRESS] MasterId: {}, Saved: {}/{}", masterId, currentTotal, details.size());
             }
+            // 마스터 테이블 총 건수 update
+            healthRecordPort.updateProcessedCount(masterId, currentTotal, master.getCreatedId());
+
             log.info("[SUCCESS] Processing completed for MasterId: {}", masterId);
         } catch (Exception e) {
             log.error("[ERROR] Bulk processing failed for MasterId: {}. Error: {}", masterId, e.getMessage());

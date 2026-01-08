@@ -36,8 +36,8 @@ public class HealthRecordPersistenceAdapter implements HealthRecordPort {
     }
 
     @Override
-    public void updateProcessedCount(Long rcMasterId, int processedCnt) {
-        healthRecordMapper.updateProcessedCount(rcMasterId, processedCnt);
+    public void updateProcessedCount(Long rcMasterId, int processedCnt, String createdId) {
+        healthRecordMapper.updateProcessedCount(rcMasterId, processedCnt, createdId);
     }
 
     @Override
