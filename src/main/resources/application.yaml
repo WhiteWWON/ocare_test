@@ -27,7 +27,7 @@ spring:
 
   mybatis:
     # XML 매퍼 파일의 경로 (src/main/resources/mapper 하위)
-    mapper-locations: classpath:mapper/**/*.xml
+    mapper-locations: classpath:mapper/*.xml
     # 카멜케이스 자동 변환 (DB의 created_at -> Java의 createdAt)
     configuration:
       map-underscore-to-camel-case: true

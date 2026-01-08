@@ -3,12 +3,14 @@ package com.ocare.Ocare.adapter.out.persistence.repository;
 import com.ocare.Ocare.domain.model.HealthRecordDetail;
 import com.ocare.Ocare.domain.model.HealthRecordMaster;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.repository.query.Param;
+import org.apache.ibatis.annotations.Param;
+import org.mybatis.spring.annotation.MapperScan;
 
 import java.util.List;
 import java.util.Optional;
 
 @Mapper
+@MapperScan
 public interface HealthRecordMapper {
     // record_key 중복 시 rc_master_id를 반환받기 위한 Upsert형 Insert
     int insertMaster(HealthRecordMaster master);
