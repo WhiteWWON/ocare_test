@@ -135,3 +135,8 @@ PARTITION BY RANGE (TO_DAYS(period_from)) (
     /*프로시저를 통해 자동 생성될 미래 파티션의 예비 저장소*/
     PARTITION p_max VALUES LESS THAN MAXVALUE 
 );
+
+
+
+--ERD 입니다.
+<img width="1324" height="752" alt="image" src="https://github.com/user-attachments/assets/33b2ebbb-d551-4bf4-baa8-83d02d57526e" />
