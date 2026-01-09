@@ -2,6 +2,8 @@ package com.ocare.Ocare.application.port.out;
 
 import com.ocare.Ocare.domain.model.HealthRecordDetail;
 import com.ocare.Ocare.domain.model.HealthRecordMaster;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,4 +24,6 @@ public interface HealthRecordPort {
 
     // [추가] recordKey와 memberId로 기존 마스터 존재 여부 확인 (멱등성 보장용)
     Optional<HealthRecordMaster> findMasterByRecordKey(String recordKey, Long memberId);
+
+    Page<HealthRecordMaster> findAllByMemberWithDetails(Long memberId, Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package com.ocare.Ocare.adapter.in.web.healthRecord;
 
+import com.ocare.Ocare.application.port.in.HealthRecordResponse;
 import com.ocare.Ocare.application.port.in.HealthRecordUseCase;
 import com.ocare.Ocare.domain.model.HealthRecordDetail;
 import com.ocare.Ocare.domain.model.HealthRecordMaster;
@@ -7,6 +8,7 @@ import com.ocare.Ocare.domain.model.RecordType;
 import com.ocare.Ocare.global.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -88,6 +90,20 @@ public class HealthRecordController {
         } catch (NumberFormatException e) {
             return BigDecimal.ZERO;
         }
+    }
+
+    @GetMapping("/getMyRecords")
+    public ResponseEntity<Page<HealthRecordResponse>> getMyRecords(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // 1. JWT에서 memberId 추출
+        Long memberId = jwtTokenProvider.getMemberId(authHeader);
+        // 2. UseCase 호출 (결과는 무한 루프가 제거된 DTO Page)
+        Page<HealthRecordResponse> result = healthRecordUseCase.getMemberRecords(memberId, page, size);
+
+        return ResponseEntity.ok(result);
     }
 
 }

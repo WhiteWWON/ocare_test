@@ -1,11 +1,15 @@
 package com.ocare.Ocare.application.service;
 
+import com.ocare.Ocare.application.port.in.HealthRecordResponse;
 import com.ocare.Ocare.application.port.in.HealthRecordUseCase;
 import com.ocare.Ocare.application.port.out.HealthRecordPort;
 import com.ocare.Ocare.domain.model.HealthRecordDetail;
 import com.ocare.Ocare.domain.model.HealthRecordMaster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +17,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HealthRecordService implements HealthRecordUseCase {
     private final HealthRecordPort healthRecordPort;
 
@@ -68,5 +73,21 @@ public class HealthRecordService implements HealthRecordUseCase {
             log.error("[ERROR] Bulk processing failed for MasterId: {}. Error: {}", masterId, e.getMessage());
             throw e; // 트랜잭션 롤백
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HealthRecordResponse> getMemberRecords(Long memberId, int page, int size) {
+        // 1. 어댑터에서 엔티티 페이지 조회 (Fetch Join 적용)
+        Page<HealthRecordMaster> masterPage = healthRecordPort.findAllByMemberWithDetails(memberId, PageRequest.of(page, size));
+
+        // 2. 엔티티를 응답용 DTO(무한 루프가 없는 구조)로 변환
+        return masterPage.map(master -> HealthRecordResponse.builder()
+                .rcMasterId(master.getRcMasterId())
+                .recordKey(master.getRecordKey())
+                .recordType(master.getRecordType())
+                .lastupdateDt(master.getLastupdateDt())
+                .details(master.toDetailDtos()) // 여기서 무한 루프 끊어짐
+                .build());
     }
 }
