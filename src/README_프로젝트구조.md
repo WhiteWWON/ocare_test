@@ -31,57 +31,8 @@
 
 
 4. 프로그램 구조도 입니다.
+<img width="685" height="836" alt="image" src="https://github.com/user-attachments/assets/c5838db4-454e-4bd5-aafd-4398cd3c3c6c" />
 
-src/main/java/com/ocare/
-├── adapter/                        # 외부 진입 영역 (Adapters)
-│   ├── in/                         # 들어오는 통로
-│   │   ├── kafka/                  # Kafka Consumer (Worker)
-│   │   │   └── HealthRecordConsumer.java   <-- [NEW] 데이터 적재 시작점 으로 생각했으나, 구현 못함
-│   │   └── web/                    # REST Controller & Security
-│   │       ├── auth/               # 회원가입/로그인/인증 컨트롤러
-│   │       ├── filter/             # Security 필터
-│   │       └── healthRecord/       # healthRecord 등록,조회 컨트롤러
-│   │       └── interceptor/        # 인터셉터
-│   └── out/                        # 나가는 통로
-│       ├── persistence/            # DB 저장소 (JPA & MyBatis)
-│       │   ├── entity/             # JPA 엔티티
-│       │   │   └── MemberJpaEntity.java
-│       │   ├── repository/         # DB 접근 인터페이스
-│       │   │   ├── SpringDataMemberRepository.java
-│       │   │   └── HealthRecordMapper.java  <-- MyBatis 매퍼
-│       │   ├── MemberPersistenceAdapter.java
-│       │   └── HealthRecordPersistenceAdapter.java
-│       └── redis/                  # Redis 저장소
-│           ├── AuthTokenPort.java
-│           └── RedisAuthAdapter.java
-│
-├── application/                    # 비즈니스 로직 (Use Cases)
-│   ├── port/                       # 포트 (인터페이스)
-│   │   ├── in/                     # Input Ports
-│   │   └── out/                    # Output Ports
-│   │       ├── MemberPort.java
-│   │       └── HealthRecordPort.java        
-│   └── service/                    # 구현체 (Services)
-│       ├── AuthService.java        # 로그인/회원 서비스
-│       └── HealthRecordService.java # 레코드 저장/조회 서비스
-│
-├── domain/                         # 도메인 모델
-│   └── model/
-│       ├── AuthToken.java
-│       ├── Member.java
-│       ├── HealthRecordMaster.java       
-│       └── HealthRecordDetail.java      
-│
-├── global/                         # 공통 설정 및 유틸
-│   ├── aspect/                     # AOP (LogAspect)
-│   ├── config/                     # 각종 Config (Redis, Security, Web)
-│   └── util/                       # 유틸리티 (JwtTokenProvider)
-│
-└── OcareApplication.java            # 메인 스프링 부트 애플리케이션
-
-[resources/]
-└── mapper/                         # MyBatis XML 위치
-    └── HealthRecordMapper.xml      <- 레코드 저장 SQL 쿼리
 		
 	
 역할 추가 설명
