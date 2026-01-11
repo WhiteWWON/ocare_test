@@ -1,0 +1,241 @@
+{
+	"info": {
+		"_postman_id": "bd76dbda-8b62-40f4-8946-db10a93ffd92",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8457804"
+	},
+	"item": [
+		{
+			"name": "signUp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"wonjae6707@ocare.com\",\r\n    \"password\": \"password1234!\",\r\n    \"name\": \"이원재\",\r\n    \"nickname\": \"데브원\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signUp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signUp"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "wonjae6707@naver.com",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "Romeo!9941",
+							"disabled": true
+						},
+						{
+							"key": "name",
+							"value": "이원재",
+							"disabled": true
+						},
+						{
+							"key": "nickname",
+							"value": "데브원",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMyRecords",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3b25qYWU2NzA3QG9jYXJlLmNvbSIsIm1lbWJlcklkIjoxLCJpYXQiOjE3Njc5NzAwMDUsImV4cCI6MTc2Nzk3MTgwNX0.0Fwri79ztV2YVOGz0JN3iZ5Amzw8U34inLVBw7_m74Y",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"page\": \"0\",\r\n    \"size\": \"5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/health/getMyRecords",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"health",
+						"getMyRecords"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"wonjae6707@ocare.com\",\r\n    \"password\": \"password1234!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3b25qYWU2NzA3QG9jYXJlLmNvbSIsImlhdCI6MTc2NzYyNDEwNywiZXhwIjoxNzY3NjI1OTA3fQ.s--OlWONIOpVWJKTB4875sfVqCpgJ_cQHEvTLRLj6yw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"wonjae6707@ocare.com\",\r\n    \"password\": \"password1234!\",\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bulk-record",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3b25qYWU2NzA3QG9jYXJlLmNvbSIsIm1lbWJlcklkIjoxLCJpYXQiOjE3Njc4ODM5NjcsImV4cCI6MTc2Nzg4NTc2N30.M6CRQ0a0MGrmUZaaLXLP-UAD_xJREAsHvQ6RDfTkWQQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recordkey\" : \"e27ba7ef-8bb2-424c-af1d-877e826b7487\",\r\n    \"data\": {\r\n        \"memo\": \"\",\r\n        \"entries\": [\r\n            {\r\n                \"steps\": \"333\",\r\n                \"period\": {\r\n                    \"to\": \"2024-11-14T23:10:00+0000\",\r\n                    \"from\": \"2024-11-14T23:00:00+0000\"\r\n                },\r\n                \"distance\": {\r\n                    \"value\": 1.2301381129210892,\r\n                    \"unit\": \"km\"\r\n                },\r\n                \"calories\": {\r\n                    \"value\": 1,\r\n                    \"unit\": \"kcal\"\r\n                }\r\n            },\r\n            {\r\n                \"steps\": \"555.128197585273\",\r\n                \"period\": {\r\n                    \"to\": \"2024-11-14T23:20:00+0000\",\r\n                    \"from\": \"2024-11-14T23:10:00+0000\"\r\n                },\r\n                \"distance\": {\r\n                    \"value\": 2.8249025580682184,\r\n                    \"unit\": \"km\"\r\n                },\r\n                \"calories\": {\r\n                    \"value\": 2,\r\n                    \"unit\": \"kcal\"\r\n                }\r\n            }\r\n            ,\r\n            {\r\n                \"steps\": \"777.128197585273\",\r\n                \"period\": {\r\n                    \"to\": \"2024-11-15T23:20:00+0000\",\r\n                    \"from\": \"2024-11-16T23:10:00+0000\"\r\n                },\r\n                \"distance\": {\r\n                    \"value\": 3.8249025580682184,\r\n                    \"unit\": \"km\"\r\n                },\r\n                \"calories\": {\r\n                    \"value\": 4,\r\n                    \"unit\": \"kcal\"\r\n                }\r\n            }\r\n\t\t\t\t],\r\n        \"source\": {\r\n            \"product\": {\r\n                \"name\": \"iPhone\",\r\n                \"vender\": \"Apple inc.\"\r\n            },\r\n            \"type\": \"\",\r\n            \"mode\": 10,\r\n            \"name\": \"Health Kit\"\r\n        }\r\n    },\r\n    \"type\": \"steps\",\r\n    \"lastUpdate\": \"2024-12-15 13:40:00 +0000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/health/bulk-record",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"health",
+						"bulk-record"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dummy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"wonjae6707@ocare.com\",\r\n    \"password\": \"password1234!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/dummy",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"dummy"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
