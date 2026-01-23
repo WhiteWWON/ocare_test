@@ -3,6 +3,7 @@ package com.ocare.Ocare.adapter.in.web.healthRecord;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -37,7 +38,7 @@ public class HealthDataRequest {
 
     @Getter @Setter
     public static class ValueUnit {
-        private Double value;
+        private BigDecimal value;
         private String unit;
     }
 

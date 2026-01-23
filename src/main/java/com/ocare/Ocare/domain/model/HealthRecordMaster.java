@@ -41,7 +41,7 @@ public class HealthRecordMaster {
         return this.details.stream()
                 .map(d -> HealthRecordDetailDto.builder()
                         .rcDetailId(d.getRcDetailId())
-                        .steps(d.getSteps().doubleValue())
+                        .steps(d.getSteps())
                         .periodFrom(d.getPeriodFrom())
                         .periodTo(d.getPeriodTo())
                         .distanceValue(d.getDistanceValue())

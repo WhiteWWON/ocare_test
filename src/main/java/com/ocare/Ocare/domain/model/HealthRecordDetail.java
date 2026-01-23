@@ -27,9 +27,9 @@ public class HealthRecordDetail {
     private LocalDateTime periodFrom; // PK 및 파티션 키
     private LocalDateTime periodTo;
     private String distanceUnit;
-    private Double distanceValue;
+    private BigDecimal distanceValue;
     private String caloriesUnit;
-    private Double caloriesValue;
+    private BigDecimal caloriesValue;
     private String createdId;
 
     @ManyToOne(fetch = FetchType.LAZY)
